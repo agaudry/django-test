@@ -1,6 +1,7 @@
 from django.db import models
 from padam_django.apps.geography.models import Place
 
+
 class Driver(models.Model):
     user = models.OneToOneField(
         "users.User", on_delete=models.CASCADE, related_name="driver"
@@ -29,12 +30,12 @@ class BusShift(models.Model):
 
     @property
     def departure_time(self):
-        first_stop = self.stops.order_by("time").first()
+        first_stop = self.stops.first()
         return first_stop.time if first_stop else None
 
     @property
     def arrival_time(self):
-        last_stop = self.stops.order_by("time").last()
+        last_stop = self.stops.last()
         return last_stop.time if last_stop else None
 
     @property
@@ -51,17 +52,18 @@ class BusStop(models.Model):
     bus_shift = models.ForeignKey(
         BusShift, on_delete=models.CASCADE, related_name="stops"
     )
-    time = models.DateTimeField(
-        "Scheduled time of arrival at the stop"
-    )
+    time = models.DateTimeField("Scheduled time of arrival at the stop")
 
     class Meta:
-            constraints = [
-                models.UniqueConstraint(
-                    fields=['place', 'time', 'bus_shift'],
-                    name='unique_bus_stop_combination'
-                )
-            ]
+        constraints = [
+            models.UniqueConstraint(
+                # If a shift has two stops at the same place and time
+                # one must be a duplicate
+                fields=["place", "time", "bus_shift"],
+                name="unique_bus_stop_combination",
+            )
+        ]
+        ordering = ["time"]
 
     def __str__(self):
-        return f"BusStop: {self.place.name} (id: {self.pk})"
+        return f"BusStop: {self.place.name} at {self.time.strftime('%H:%M')} (id: {self.pk})"

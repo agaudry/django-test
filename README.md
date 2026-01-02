@@ -193,3 +193,18 @@ en temps que d'autres ...
  - Privilégier la qualité et les bonnes pratiques.
  - Vous pouvez réduire le périmètre du projet si vous manquez de temps. Une ébauche de réponse est déjà une bonne chose.
  - Soyez prêt à présenter le sujet, à justifier vos choix et à parler de comment vous auriez fait les parties que vous avez laisser de côté.
+
+
+---
+
+### Notes Adèle
+Things I would have done with more time:
+- Make the BusStop form more user-friendly, sorting the places list by distance from the last bus stop coordinates
+    - in the context of a complete app dealing with bus routes, we would probably already have Postgis installed in a Postgres DB, so it could be a quick win
+- Another nice option would be to be able to combine a classic select with a list and an autocomplete field (but I have not found a way to make it work with only django admin)
+- Make the unique constraint take into account time to the minute would make it more useful
+    - I could not make it work in sqlite but I think with Postgres I could use TruncMinute("time") in the constraint
+- Make error messages more explicit, referencing the id of the overlapping shift(s)
+- Move BusShift and BusStop to a new app, as they might not really belong in "fleet"
+- Create a few more tests to be exhaustive on BusShift error cases
+    - here I prioritized checking for overlap cases because it seemed like the riskiest part of the code (the rest being mostly managed by django)
